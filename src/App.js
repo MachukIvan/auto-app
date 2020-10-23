@@ -1,58 +1,64 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { useState, useMemo } from 'react';
+import { connect } from 'react-redux';
+import SearchPanel from './components/SearchPanel';
+import CarsList from './components/CarsList';
+import * as constants from './shared/constants';
+import classes from './App.module.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
-  );
-}
+const App = ({ cars, search }) => {
+    const [cardsToShowCount, setCardsToShowCount] = useState(
+        constants.CARDS_PER_PAGE
+    );
+    const [currentPage, setCurrentPage] = useState(1);
 
-export default App;
+    const filteredCars = useMemo(
+        () =>
+            cars.filter((car) => {
+                return Object.keys(search.filters).find((filter) => {
+                    if (search.filters[filter] && car[filter]) {
+                        return car[filter]
+                            .toString()
+                            .toLowerCase()
+                            .includes(search.searchInput.toLowerCase());
+                    }
+                    return false;
+                });
+            }),
+        [cars, search]
+    );
+
+    const showMoreButtonHandler = () => {
+        setCardsToShowCount(
+            (cardsShown) => cardsShown + constants.CARDS_PER_PAGE
+        );
+        setCurrentPage((currentPage) => currentPage + 1);
+    };
+
+    const showMoreButton =
+        filteredCars.length > currentPage * constants.CARDS_PER_PAGE ? (
+            <button
+                name="show-more-button"
+                className={classes.showMoreButton}
+                onClick={showMoreButtonHandler}
+            >
+                Show More
+            </button>
+        ) : null;
+
+    return (
+        <div className={classes.container}>
+            <SearchPanel />
+            <CarsList carsData={filteredCars.slice(0, cardsToShowCount)} />
+            {showMoreButton}
+        </div>
+    );
+};
+
+const mapStateToProps = (state) => {
+    return {
+        cars: state.cars,
+        search: state.search,
+    };
+};
+
+export default connect(mapStateToProps)(App);

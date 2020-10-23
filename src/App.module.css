@@ -1,0 +1,12 @@
+.container {
+    height: 100%;
+    width: 100%;
+    padding: 1rem;
+}
+
+.showMoreButton {
+    height: 30px;
+    width: 300px;
+    font-size: 1rem;
+    margin: 1rem 0;
+}

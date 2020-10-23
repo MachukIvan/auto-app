@@ -1,0 +1,26 @@
+.searchContainer {
+    max-width: 800px;
+    padding: 1rem;
+    box-shadow: 2px 2px 4px -2px rgba(0, 0, 0, 0.5);
+    border: 1px solid #ccc;
+}
+
+.inputContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.input {
+    height: 30px;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.searchButton {
+    height: 30px;
+    width: 120px;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
